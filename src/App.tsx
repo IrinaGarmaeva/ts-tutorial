@@ -1,5 +1,6 @@
 import Input from "./components/Input";
 import Button from "./components/Button";
+import Container from "./components/Container";
 
 function App() {
   return(
@@ -12,6 +13,7 @@ function App() {
       <p>
       <Button href="https://google.com" target="_blank">A link</Button>
       </p>
+      <Container as={Button} onClick={() => window.alert("You've clicked on click button")}>Click me</Container>
     </main>
   );
 }
