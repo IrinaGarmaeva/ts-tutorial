@@ -1,6 +1,6 @@
-import { type ReactNode, createContext, useContext } from "react";
+import { type ReactNode, createContext, useContext, useState, useReducer } from "react";
 
-type Timer = {
+export type Timer = {
 	name: string, 
 	duration: number,
 }
@@ -8,6 +8,11 @@ type Timer = {
 type TimersState = {
 	isRunning: boolean,
 	timers: Timer[]
+}
+
+const initialState: TimersState = {
+	isRunning: true,
+	timers: []
 }
 
 type TimersContextValue = TimersState & {
@@ -31,21 +36,66 @@ type TimersContextProviderProps = {
 	children: ReactNode
 }
 
-export default function TimersContextProvider({children}: TimersContextProviderProps) {
+type StartTimersAction = {
+	type: 'START_TIMERS'
+}
 
-	const ctx: TimersContextValue = {
-		timers: [],
-		isRunning: false,
-		addTimer(timerData) {
-			console.log(timerData)
-		},
-		startTimers() {
+type AddTimerAction = {
+	type: 'ADD_TIMER',
+	payload: Timer
+}
 
-		},
-		stopTimers(){
+type StopTimersActions = {
+	type: 'STOP_TIMERS'
+}
 
+type Action = StartTimersAction | AddTimerAction | StopTimersActions
+
+function timersReducer(state: TimersState, action: Action): TimersState{
+	if(action.type === 'START_TIMERS') {
+		return {
+			...state,
+			isRunning: true
+		}
+	}
+	if(action.type === 'STOP_TIMERS'){
+		return {
+			...state, 
+			isRunning: false
+		}
+	}
+	if(action.type === 'ADD_TIMER') {
+		return {
+			...state,
+			timers: [
+				...state.timers, 
+				{
+					name: action.payload.name,
+					duration: action.payload.duration
+				}
+			]
 		}
 	}
 
-	return <TimersContext.Provider value={ctx}>{children}</TimersContext.Provider>
+	return state
+}
+
+export default function TimersContextProvider({children}: TimersContextProviderProps) {
+	const [timersState, dispatch] = useReducer(timersReducer, initialState)
+
+	const context: TimersContextValue = {
+		timers: timersState.timers,
+		isRunning: timersState.isRunning,
+		addTimer(timerData) {
+			dispatch({type: 'ADD_TIMER', payload: timerData})
+		},
+		startTimers() {
+			dispatch({type: 'START_TIMERS'})
+		},
+		stopTimers(){
+			dispatch({type: 'STOP_TIMERS'})
+		}
+	}
+
+	return <TimersContext.Provider value={context}>{children}</TimersContext.Provider>
 }
