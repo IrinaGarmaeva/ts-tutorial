@@ -6,6 +6,7 @@ import { ITodo, IUser } from './types/types';
 import axios from 'axios';
 import UserItem from './components/UserItem';
 import TodoItem from './components/TodoItem';
+import EventsExample from './components/EventsExample';
 
 function App() {
 const [users, setUsers] = useState<IUser[]>([]);
@@ -23,7 +24,6 @@ async function fetchUsers() {
 async function fetchTodos() {
   try {
     const response = await axios.get<ITodo[]>('https://jsonplaceholder.typicode.com/todos?_limit=10')
-    console.log(response.data)
     setTodos(response.data)
   } catch (e) {
     alert(e)
@@ -37,6 +37,7 @@ useEffect(() => {
 
   return (
     <div>
+      <EventsExample />
       <Card width='200px' height='200px' variant={CardVariant.outlined} onClick={() => window.alert("You clicked the card")}>
         <button>Button</button>
       </Card>
