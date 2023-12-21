@@ -20,7 +20,7 @@ const Footer = ({ viewCart }: FooterProps) => {
   );
 
   return (
-		<footer>
+		<footer className="footer">
 			{pageContent}
 		</footer>
 	);
